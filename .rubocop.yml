@@ -1,0 +1,27 @@
+AllCops:
+  TargetRubyVersion: 3.0.0
+  SuggestExtensions: false
+  Include:
+    - Rakefile
+    - config.ru
+  Exclude:
+    - db/**
+    - config/**
+    - script/**
+    - vendor/**/* # Circle adds the rubies here
+  NewCops: enable 
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
