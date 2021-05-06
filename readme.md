@@ -1,8 +1,16 @@
 # Ruby
 
-- [metaprogramacion-en-ruby-parte-1](https://vincentblog.xyz/posts/metaprogramacion-en-ruby-parte-1)
+1. [RAILS](#RAILS)
 
-- [metaprogramacion-en-ruby-parte-2](https://vincentblog.xyz/posts/metaprogramacion-en-ruby-parte-2)
+   1.1 [Estructura](#Estructura)
+
+2. [Preparando el entorno](#Preparando-el-entorno)
+3. [Desde 0](#Desde-0)
+4. [INFO (WVC)](#INFO-(WVC))
+   1. [Tecnologias](#Tecnologias)
+   2. [Puma](#Postgres)
+   3. [Sidekiq](#Sidekiq)
+   4. [ActiveStorage](#ActiveStorage-/-Persistence-in-S3)
 
 ## RAILS
 
@@ -31,6 +39,28 @@
 | .gitignore          | This file tells git which files (or patterns) it should ignore. See GitHub - Ignoring files for more info about ignoring files.                                                                                                                                            |
 | .ruby-version       | This file contains the default Ruby version.                                                                                                                                                                                                                               |
 
+## Preparando el entorno
+
+0. [wsdl](https://docs.microsoft.com/es-es/windows/wsl/install-win10)
+1. [Rvenv](https://github.com/rbenv/rbenv)
+2. Docker - Para BBDD , Redis....
+3. VisualStudioCode - plugins
+   1. Ruby
+   2. Ruby solargraph
+   3. Ruby Rubocop
+   4. Rails
+
+### Ruby versions on system
+
+update:
+
+```bash
+ cd ~/.rbenv/plugins/ruby-build
+ git pull
+```
+
+## Rails Starters
+
 ### Rails CRUD con front
 
 -[como-crear-un-crud-con-ruby-on-rails-6-y-bootstrap-4-parte-1](https://blog.nubecolectiva.com/como-crear-un-crud-con-ruby-on-rails-6-y-bootstrap-4-parte-1/)
@@ -41,72 +71,151 @@ rails new crud -d=postgresql
 bin/rails middleware
 ```
 
-### Rails Api Only Graph ql
+### Rails Api Only
 
 - [Rails API-Only](https://guides.rubyonrails.org/api_app.html)
-- [Graphql](https://www.howtographql.com/)
+
+### Graphql-Ruby
+
 - [Graphql - Ruby](https://www.howtographql.com/graphql-ruby/0-introduction/)
+- [Ruby-GraphQl generators](https://graphql-ruby.org/schema/generators#graphqlinstall)
+
+## Desde 0
+
+- [Start](https://www.howtographql.com/graphql-ruby/1-getting-started/)
 
 0. Creamos el proyecto
 
 ```ruby
-rails new crud-api --skip-action-mailer --skip-action-mailbox --skip-action-text --skip-active-storage --skip-action-cable --skip-javascript --skip-system-test --skip-webpack-install
-cd crud-api
-bundle exec rails db:create
-bundle exec rails server
+rails new crud-graphql-api --skip-action-mailer --skip-action-mailbox --skip-action-text --skip-active-storage --skip-action-cable --skip-javascript --skip-system-test --skip-webpack-install -d
 # Middleware usado
 bin/rails middleware
 ```
 
 1. Añadimos al gemfile
 
+    ```ruby
+    group :development do
+    ....
+      gem 'solargraph', require: false
+      #gem 'ruby-debug-ide', require: false
+      gem 'rubocop', require: false
+      gem 'rubocop-rails', require: false
+    end
 
-```ruby
-group :development do
-....
-  gem 'solargraph', require: false
-  #gem 'ruby-debug-ide', require: false
-  gem 'rubocop', require: false
-  gem 'rubocop-rails', require: false
-end
+    gem 'graphql'
+    gem 'dotenv-rails', require: 'dotenv/rails-now'
 
-gem 'graphql'
-gem 'dotenv-rails', require: 'dotenv/rails-now'
-
-```
+    ```
 
 2. Añadimos los parametros de conexion en el .env
 
-3. Bundle install
+3. `docker-compose -f docker-compose_postgres_redis.yml up`
 
-4. GraphQl
+4. Bundle install
+
+5. GraphQl
+
+    ```ruby
+    rails g graphql:install
+    bundle exec rails generate model User name:string email:string phone:string password:string
+    rails g graphql:object UserType id:ID! name:String! email:String! phone:String! password:String!
+
+    ```
+
+### Credenciales De Aplicacion
+
+Dejamos a rails que gestione los secretos de aplicacion.
+Para desencriptar los secretos que usa la aplicacion :
+
+`EDITOR="code --wait" rails credentials:edit` , \*code se refiere al editor
+
+Este comando usa la clave presente en config/master.key para desencriptar el fichero credentials.yml.enc .
+
+- _No se debe subir a git el fichero master.key_
+
+## INFO (WVC)
+
+- [GIT-Web Versia Cloud](https://github.com/VersiaSistemas/wvc-backend-n.git)
+
+### Tecnologias
+
+Una lista completa de la paqueteria usada se puede ver en el archivo [gemfile](gemfile)
+
+| Tecnologia | version |
+| ---------- | ------- |
+| ruby       | 3.0.0   |
+| rails      | 6.1.1   |
+| puma       | 5.1.1   |
+| Graph ql   |         |
+| Postgres   |         |
+| Redis      |         |
+| Sideqik    |         |
+| jekyll     | 4.2.0   |  |
+
+---
+
+### Puma
+
+Puma es el servidor de desarrolo en el que se despliega la aplicacion
+Su configuracion se controla desde `config/puma.rb`
+`rails server` || `rails s`: arrancar
+`rails restart` :reiniciar(si añadimos nuevas gemas)
+
+Las rutas expuestas por este servidor se definen en [/config/ruotes.rb](/config/ruotes.rb)
+
+### Postgres
+
+Usamos Postgres como db relacional.
+
+- generar una migracion `rails generate migration exampleMigration`
+
+- delte all data from tables --> `rails db:truncate_all`
+
+### Sidekiq
+
+- [sidekiq.yml](https://mikerogers.io/2019/06/06/rails-6-sidekiq-queues)
+
+Para acceder a la interfaz gráfica de Sidekiq, en la cual tendremos acceso a una mejor visualización de nuestros trabajos que se ejecutaron, se están ejecutando o se ejecutarán,
+en config/routes.rb lo siguiente.
 
 ```ruby
-rails g graphql:install
-bundle exec rails generate model User name:string email:string phone:string password:string
-rails g graphql:object UserType id:ID! name:String! email:String! phone:String! password:String!
-
-
-
-
+    require 'sidekiq/web'
+    mount Sidekiq::Web => '/sidekiq'
 ```
 
-### Graphql-Ruby
+Arrancar: ```bundle exec sidekiq -C config/sidekiq.yml -e development```
 
-- [graphqleditor](https://graphqleditor.com/graphql)
+Para acceder leeremos las credenciales de .env
 
-- [generators](https://graphql-ruby.org/schema/generators#graphqlinstall)
+### Jekyll
 
-- [Start](https://www.howtographql.com/graphql-ruby/1-getting-started/)
+Sitios estaticos con markdown
 
-## entorno desarrollo
+- [Start](https://www.sitepoint.com/jekyll-rails/)
 
-0. wsdl
-1. [Rvenv](https://github.com/rbenv/rbenv)
+- Añadir al gemfile :
 
-### Ruby versions
-
-```bash
- cd ~/.rbenv/plugins/ruby-build
- git pull
+```ruby
+gem 'jekyll', '~> 4.2.0'
+group :jekyll_plugins do
+  gem "jekyll-feed"
+  ##gem "jekyll-seo-tag"
+end
 ```
+
+- luego : `bundle exec jekyll new blog`
+- We’ll leave most of these where they are, but we’re going to move \_config.yml into the Rails config directory and rename it : jekyll.yml
+
+### ActiveStorage / Persistence in S3
+
+Aqui almacenamos los tf_states asociados a cada contrato de VPS
+
+- [info 1](https://medium.com/alturasoluciones/setting-up-rails-5-active-storage-with-amazon-s3-3d158cf021ff)
+
+- [Activar active storage para attach](https://edgeguides.rubyonrails.org/active_storage_overview.html)
+
+- Active Storage scheme
+- ![IMG](https://pragmaticstudio.com/images/tutorials/using-active-storage-in-rails/polymorphic.jpg)
+
+
