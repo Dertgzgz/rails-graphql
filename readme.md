@@ -45,7 +45,7 @@
 
 ## Preparando el entorno
 
-0. [wsdl](https://docs.microsoft.com/es-es/windows/wsl/install-win10)
+0. [wsl](https://docs.microsoft.com/es-es/windows/wsl/install-win10)
 1. [Rvenv](https://github.com/rbenv/rbenv)
 2. Docker - Para BBDD , Redis....
 3. VisualStudioCode - plugins
