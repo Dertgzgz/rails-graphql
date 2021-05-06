@@ -2,6 +2,10 @@
 
 1. [RAILS](#RAILS)
 
+   - [metaprogramacion-en-ruby-parte-1](https://vincentblog.xyz/posts/metaprogramacion-en-ruby-parte-1)
+
+   - [metaprogramacion-en-ruby-parte-2](https://vincentblog.xyz/posts/metaprogramacion-en-ruby-parte-2)
+
    1.1 [Estructura](#Estructura)
 
 2. [Preparando el entorno](#Preparando-el-entorno)
@@ -87,7 +91,7 @@ bin/rails middleware
 0. Creamos el proyecto
 
 ```ruby
-rails new crud-graphql-api --skip-action-mailer --skip-action-mailbox --skip-action-text --skip-active-storage --skip-action-cable --skip-javascript --skip-system-test --skip-webpack-install -d
+rails new crud-graphql-api --skip-action-mailer --skip-action-mailbox --skip-action-text --skip-active-storage --skip-action-cable --skip-javascript --skip-system-test --skip-webpack-install -d=postgresql
 # Middleware usado
 bin/rails middleware
 ```
